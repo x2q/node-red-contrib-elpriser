@@ -43,7 +43,12 @@ function start() {
   return new Promise((resolve) => {
     server.listen(0, '127.0.0.1', () => {
       const url = `http://127.0.0.1:${server.address().port}`;
-      resolve({ url, state, close: () => new Promise((r) => server.close(r)) });
+      resolve({ url, state, close: () =>
+          new Promise((r) => {
+            server.close(r);
+            // fetch() keeps connections alive; do not wait for them (Node 18/20)
+            if (server.closeAllConnections) server.closeAllConnections();
+          }) });
     });
   });
 }
