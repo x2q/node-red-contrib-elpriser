@@ -1,0 +1,202 @@
+[
+ {
+  "key": "dk1",
+  "label": "Denmark - DK1 West (Jutland, Funen)",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "dk2",
+  "label": "Denmark - DK2 East (Zealand, Bornholm)",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "no1",
+  "label": "Norway - NO1 Oslo",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "no2",
+  "label": "Norway - NO2 Kristiansand",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "no3",
+  "label": "Norway - NO3 Trondheim",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "no4",
+  "label": "Norway - NO4 Tromsø",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "no5",
+  "label": "Norway - NO5 Bergen",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "se1",
+  "label": "Sweden - SE1 Luleå",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "se2",
+  "label": "Sweden - SE2 Sundsvall",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "se3",
+  "label": "Sweden - SE3 Stockholm",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "se4",
+  "label": "Sweden - SE4 Malmö",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "fi",
+  "label": "Finland",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "nl",
+  "label": "Netherlands",
+  "tz": "Europe/Copenhagen"
+ },
+ {
+  "key": "de",
+  "label": "Germany and Luxembourg (DE-LU)",
+  "tz": "Europe/Berlin"
+ },
+ {
+  "key": "fr",
+  "label": "France",
+  "tz": "Europe/Paris"
+ },
+ {
+  "key": "pl",
+  "label": "Poland",
+  "tz": "Europe/Warsaw"
+ },
+ {
+  "key": "it-n",
+  "label": "Italy - North (IT-North)",
+  "tz": "Europe/Rome"
+ },
+ {
+  "key": "at",
+  "label": "Austria",
+  "tz": "Europe/Vienna"
+ },
+ {
+  "key": "be",
+  "label": "Belgium",
+  "tz": "Europe/Brussels"
+ },
+ {
+  "key": "ch",
+  "label": "Switzerland",
+  "tz": "Europe/Zurich"
+ },
+ {
+  "key": "cz",
+  "label": "Czechia",
+  "tz": "Europe/Prague"
+ },
+ {
+  "key": "hu",
+  "label": "Hungary",
+  "tz": "Europe/Budapest"
+ },
+ {
+  "key": "si",
+  "label": "Slovenia",
+  "tz": "Europe/Ljubljana"
+ },
+ {
+  "key": "es",
+  "label": "Spain",
+  "tz": "Europe/Madrid"
+ },
+ {
+  "key": "pt",
+  "label": "Portugal",
+  "tz": "Europe/Lisbon"
+ },
+ {
+  "key": "sk",
+  "label": "Slovakia",
+  "tz": "Europe/Bratislava"
+ },
+ {
+  "key": "gr",
+  "label": "Greece",
+  "tz": "Europe/Athens"
+ },
+ {
+  "key": "ro",
+  "label": "Romania",
+  "tz": "Europe/Bucharest"
+ },
+ {
+  "key": "bg",
+  "label": "Bulgaria",
+  "tz": "Europe/Sofia"
+ },
+ {
+  "key": "hr",
+  "label": "Croatia",
+  "tz": "Europe/Zagreb"
+ },
+ {
+  "key": "rs",
+  "label": "Serbia",
+  "tz": "Europe/Belgrade"
+ },
+ {
+  "key": "ee",
+  "label": "Estonia",
+  "tz": "Europe/Tallinn"
+ },
+ {
+  "key": "lv",
+  "label": "Latvia",
+  "tz": "Europe/Riga"
+ },
+ {
+  "key": "lt",
+  "label": "Lithuania",
+  "tz": "Europe/Vilnius"
+ },
+ {
+  "key": "me",
+  "label": "Montenegro",
+  "tz": "Europe/Podgorica"
+ },
+ {
+  "key": "mk",
+  "label": "North Macedonia",
+  "tz": "Europe/Skopje"
+ },
+ {
+  "key": "al",
+  "label": "Albania",
+  "tz": "Europe/Tirane"
+ },
+ {
+  "key": "xk",
+  "label": "Kosovo",
+  "tz": "Europe/Belgrade"
+ },
+ {
+  "key": "gb",
+  "label": "Great Britain (within-day market index, not day-ahead)",
+  "tz": "Europe/London"
+ },
+ {
+  "key": "ie",
+  "label": "Ireland (all-island market)",
+  "tz": "Europe/Dublin"
+ }
+]

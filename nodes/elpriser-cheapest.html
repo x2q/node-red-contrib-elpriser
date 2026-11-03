@@ -1,0 +1,120 @@
+<script type="text/javascript">
+  RED.nodes.registerType("elpriser-cheapest", {
+    category: "elpriser",
+    color: "#f3b562",
+    defaults: {
+      name: { value: "" },
+      server: { value: "", type: "elpriser-config", required: true },
+      strategy: { value: "hours" },
+      count: { value: 4, required: true, validate: RED.validators.number() },
+      scope: { value: "next" },
+      lookahead: { value: 24, validate: RED.validators.number() },
+      includeForecast: { value: false },
+      maxPrice: { value: "", validate: function (v) { return v === "" || !isNaN(Number(v)); } },
+      autoEmit: { value: false },
+      onlyChange: { value: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-clock-o",
+    label: function () {
+      if (this.name) return this.name;
+      var what = this.strategy === "window" ? "cheapest " + this.count + " h window" : "cheapest " + this.count + " hours";
+      return what + (this.scope === "today" ? " today" : " / " + this.lookahead + " h");
+    },
+    paletteLabel: "cheapest hours",
+    oneditprepare: function () {
+      function update() {
+        $(".elpriser-next").toggle($("#node-input-scope").val() === "next");
+        $(".elpriser-auto").toggle($("#node-input-autoEmit").is(":checked"));
+      }
+      $("#node-input-scope").on("change", update);
+      $("#node-input-autoEmit").on("change", update);
+      update();
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="elpriser-cheapest">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-globe"></i> Zone</label>
+    <input type="text" id="node-input-server" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-strategy"><i class="fa fa-filter"></i> Find</label>
+    <select id="node-input-strategy" style="width:70%">
+      <option value="hours">the N cheapest hours (any, not necessarily in a row)</option>
+      <option value="window">the cheapest run of N hours in a row</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-count"><i class="fa fa-hashtag"></i> N (hours)</label>
+    <input type="number" id="node-input-count" min="1" max="48" style="width:80px" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-scope"><i class="fa fa-calendar"></i> Look at</label>
+    <select id="node-input-scope" style="width:70%">
+      <option value="next">the next H hours, starting with the current hour</option>
+      <option value="today">today (the zone's calendar day, hours that have passed included)</option>
+    </select>
+  </div>
+  <div class="form-row elpriser-next">
+    <label for="node-input-lookahead"><i class="fa fa-arrow-right"></i> H (hours)</label>
+    <input type="number" id="node-input-lookahead" min="1" max="240" style="width:80px" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-maxPrice"><i class="fa fa-ban"></i> Max price</label>
+    <input type="text" id="node-input-maxPrice" placeholder="optional, per kWh in the zone's currency" />
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-includeForecast" style="display:inline-block; width:auto; vertical-align:top;" />
+    <label for="node-input-includeForecast" style="width:70%">Also use model-forecast hours (not yet published prices)</label>
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-autoEmit" style="display:inline-block; width:auto; vertical-align:top;" />
+    <label for="node-input-autoEmit" style="width:70%">Also send a message at the start of every hour</label>
+  </div>
+  <div class="form-row elpriser-auto">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-onlyChange" style="display:inline-block; width:auto; vertical-align:top;" />
+    <label for="node-input-onlyChange" style="width:70%">...but only when "cheap now" changes</label>
+  </div>
+</script>
+
+<script type="text/html" data-help-name="elpriser-cheapest">
+  <p>Finds the cheapest hours, or the cheapest run of hours in a row, and tells whether <em>now</em> is one of them.
+    Use it to switch a dishwasher, a heat pump boost or an EV charger on in the cheap hours.</p>
+  <h3>Input</h3>
+  <dl class="message-properties">
+    <dt class="optional">count, lookahead, maxPrice, scope, strategy, includeForecast</dt>
+    <dd>Override the node's settings for this message.</dd>
+    <dt class="optional">now <span class="property-type">number | string</span></dt>
+    <dd>Pretend it is this moment (milliseconds or ISO 8601).</dd>
+  </dl>
+  <h3>Output</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">boolean</span></dt>
+    <dd><code>true</code> if the current hour is one of the chosen hours (or inside the chosen window).</dd>
+    <dt>elpriser <span class="property-type">object</span></dt>
+    <dd>
+      <code>active</code>, <code>slots</code> (the chosen hours in time order, each <code>{start, end, price, type}</code>),
+      <code>start</code> / <code>end</code> (first start, last end), <code>average</code> price, <code>nextStart</code> (the next chosen hour that has not begun),
+      <code>basedOnForecast</code> (a chosen hour is a model forecast), <code>hoursConsidered</code>, <code>reason</code> (only if less was found than asked for),
+      <code>zone</code>, <code>currency</code>, <code>unit</code>.
+    </dd>
+  </dl>
+  <h3>Details</h3>
+  <p><b>Next H hours</b> looks at the current hour and the following H-1 hours. <b>Today</b> looks at the zone's whole calendar day,
+    which answers "is this one of today's N cheapest hours".</p>
+  <p>The run of hours in a row never contains a gap, an hour without a price breaks it. With a <b>max price</b>, single hours must not
+    cost more than it; for a run the <em>average</em> must not.</p>
+  <p>Hours after the published day-ahead prices (usually tomorrow before about 13:00 CET) are only a statistical model
+    from elpriser.org, not an official forecast. They are left out unless you tick the box; then check <code>basedOnForecast</code>.</p>
+  <p>With the hourly option the node sends by itself a few seconds after each full hour, optionally only when the answer changes.</p>
+</script>

@@ -1,0 +1,138 @@
+<script type="text/javascript">
+  RED.nodes.registerType("elpriser-config", {
+    category: "config",
+    defaults: {
+      name: { value: "" },
+      zone: { value: "dk1", required: true },
+      mode: { value: "inkl_alt" },
+      gln: { value: "", validate: function (v) { return v === "" || /^\d{13}$/.test(v); } },
+      currency: { value: "local" },
+      baseUrl: { value: "" }
+    },
+    label: function () {
+      return this.name || "elpriser " + (this.zone || "").toUpperCase() + (/^dk/.test(this.zone) && this.currency !== "eur" ? " " + this.mode : "");
+    },
+    oneditprepare: function () {
+      var zones = [
+      ["dk1", "Denmark - DK1 West (Jutland, Funen)"],
+      ["dk2", "Denmark - DK2 East (Zealand, Bornholm)"],
+      ["no1", "Norway - NO1 Oslo"],
+      ["no2", "Norway - NO2 Kristiansand"],
+      ["no3", "Norway - NO3 Trondheim"],
+      ["no4", "Norway - NO4 Tromsø"],
+      ["no5", "Norway - NO5 Bergen"],
+      ["se1", "Sweden - SE1 Luleå"],
+      ["se2", "Sweden - SE2 Sundsvall"],
+      ["se3", "Sweden - SE3 Stockholm"],
+      ["se4", "Sweden - SE4 Malmö"],
+      ["fi", "Finland"],
+      ["nl", "Netherlands"],
+      ["de", "Germany and Luxembourg (DE-LU)"],
+      ["fr", "France"],
+      ["pl", "Poland"],
+      ["it-n", "Italy - North (IT-North)"],
+      ["at", "Austria"],
+      ["be", "Belgium"],
+      ["ch", "Switzerland"],
+      ["cz", "Czechia"],
+      ["hu", "Hungary"],
+      ["si", "Slovenia"],
+      ["es", "Spain"],
+      ["pt", "Portugal"],
+      ["sk", "Slovakia"],
+      ["gr", "Greece"],
+      ["ro", "Romania"],
+      ["bg", "Bulgaria"],
+      ["hr", "Croatia"],
+      ["rs", "Serbia"],
+      ["ee", "Estonia"],
+      ["lv", "Latvia"],
+      ["lt", "Lithuania"],
+      ["me", "Montenegro"],
+      ["mk", "North Macedonia"],
+      ["al", "Albania"],
+      ["xk", "Kosovo"],
+      ["gb", "Great Britain (within-day market index, not day-ahead)"],
+      ["ie", "Ireland (all-island market)"]
+      ];
+      var sel = $("#node-config-input-zone");
+      zones.forEach(function (z) {
+        $("<option/>").val(z[0]).text(z[0].toUpperCase() + " - " + z[1]).appendTo(sel);
+      });
+      sel.val(this.zone || "dk1");
+      function update() {
+        var dk = /^dk/.test(sel.val()) && $("#node-config-input-currency").val() !== "eur";
+        $(".elpriser-dk").toggle(dk);
+        var net = /^net_/.test($("#node-config-input-mode").val());
+        $(".elpriser-gln").toggle(dk && net);
+      }
+      sel.on("change", update);
+      $("#node-config-input-currency").on("change", update);
+      $("#node-config-input-mode").on("change", update);
+      update();
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="elpriser-config">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-zone"><i class="fa fa-globe"></i> Zone</label>
+    <select id="node-config-input-zone" style="width:70%"></select>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-currency"><i class="fa fa-money"></i> Currency</label>
+    <select id="node-config-input-currency" style="width:70%">
+      <option value="local">The zone's currency (DKK, SEK, NOK, PLN, ...)</option>
+      <option value="eur">EUR</option>
+    </select>
+  </div>
+  <div class="form-row elpriser-dk">
+    <label for="node-config-input-mode"><i class="fa fa-bolt"></i> Price type</label>
+    <select id="node-config-input-mode" style="width:70%">
+      <option value="inkl_alt">inkl_alt - spot + Energinet tariffs + duty + VAT ("Din pris" without grid company)</option>
+      <option value="net_inkl_alt">net_inkl_alt - the full price incl. your grid company's tariff</option>
+      <option value="net_inkl_alt_elvarme">net_inkl_alt_elvarme - full price, reduced duty (electric heating)</option>
+      <option value="net_inkl_tarif">net_inkl_tarif - with grid tariff, without duty</option>
+      <option value="inkl_alt_elvarme">inkl_alt_elvarme - reduced duty (electric heating)</option>
+      <option value="inkl_alt_minus">inkl_alt_minus - without the electricity duty</option>
+      <option value="spot_inkl">spot_inkl - spot price incl. VAT</option>
+      <option value="spot_ex">spot_ex - spot price excl. VAT</option>
+    </select>
+  </div>
+  <div class="form-row elpriser-dk elpriser-gln">
+    <label for="node-config-input-gln"><i class="fa fa-plug"></i> Grid company GLN</label>
+    <input type="text" id="node-config-input-gln" placeholder="13 digits, e.g. 5790000705689 (Radius)" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-baseUrl"><i class="fa fa-link"></i> Base URL</label>
+    <input type="text" id="node-config-input-baseUrl" placeholder="https://elpriser.org (leave empty)" />
+  </div>
+  <div class="form-tips">
+    Outside Denmark the price is the wholesale (day-ahead) price without VAT, taxes and grid fees.
+    Prices are fetched once per hour per zone and shared by all elpriser nodes using this configuration.
+  </div>
+</script>
+
+<script type="text/html" data-help-name="elpriser-config">
+  <p>The price zone every elpriser node reads from. No account and no API key: the data is served by
+    <a href="https://elpriser.org" target="_blank">elpriser.org</a>.</p>
+  <h3>Details</h3>
+  <dl class="message-properties">
+    <dt>Zone</dt>
+    <dd>One of 40 price zones: Denmark (DK1, DK2), the other Nordic zones and the Netherlands, most of continental Europe, Great Britain and Ireland.</dd>
+    <dt>Price type <span class="property-type">Denmark</span></dt>
+    <dd><code>inkl_alt</code>: spot + Energinet's system and transmission tariff + electricity duty + 25 % VAT (everything except your own grid company's tariff).
+      <code>net_inkl_alt</code>: the full price you pay, adds your grid company's tariff (needs its 13-digit GLN, list on <a href="https://elpriser.org/tariffer" target="_blank">elpriser.org/tariffer</a>).
+      <code>spot_inkl</code> / <code>spot_ex</code>: the raw spot price with / without VAT.</dd>
+    <dt>Currency</dt>
+    <dd>Zones outside the euro area are converted with the ECB reference rate. Denmark in EUR is the wholesale price without taxes. Great Britain is always GBP.</dd>
+    <dt>Base URL</dt>
+    <dd>Leave empty. Only for tests against a mock server.</dd>
+  </dl>
+  <p>Requests: one per zone per hour for the whole day set (today, tomorrow once published, the forecast days),
+    revalidated with <code>If-None-Match</code>, backing off on errors.</p>
+</script>

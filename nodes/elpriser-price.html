@@ -1,0 +1,61 @@
+<script type="text/javascript">
+  RED.nodes.registerType("elpriser-price", {
+    category: "elpriser",
+    color: "#f3b562",
+    defaults: {
+      name: { value: "" },
+      server: { value: "", type: "elpriser-config", required: true },
+      autoEmit: { value: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-bolt",
+    label: function () {
+      return this.name || "elpriser price";
+    },
+    paletteLabel: "price now"
+  });
+</script>
+
+<script type="text/html" data-template-name="elpriser-price">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-globe"></i> Zone</label>
+    <input type="text" id="node-input-server" />
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-autoEmit" style="display:inline-block; width:auto; vertical-align:top;" />
+    <label for="node-input-autoEmit" style="width:70%">Also send a message at the start of every hour</label>
+  </div>
+</script>
+
+<script type="text/html" data-help-name="elpriser-price">
+  <p>The electricity price of the current hour, plus the next hour and a few numbers about today.</p>
+  <h3>Input</h3>
+  <dl class="message-properties">
+    <dt class="optional">now <span class="property-type">number | string</span></dt>
+    <dd>Pretend it is this moment (milliseconds or ISO 8601). For testing and what-if flows; default is the real time.</dd>
+  </dl>
+  <h3>Output</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">number | null</span></dt>
+    <dd>The price per kWh right now, in the zone's currency (<code>msg.elpriser.unit</code>). <code>null</code> if the hour has no price.</dd>
+    <dt>elpriser <span class="property-type">object</span></dt>
+    <dd>
+      <code>zone</code>, <code>currency</code>, <code>unit</code>, <code>price</code>, <code>start</code>/<code>end</code> (ISO 8601 UTC) of the hour,
+      <code>type</code> (<code>actual</code> = published price, <code>forecast</code> = model),
+      <code>next</code> (<code>{start, end, price, type}</code> of the next hour or <code>null</code>),
+      <code>level</code> (<code>cheap</code>, <code>normal</code>, <code>expensive</code>: where the price lies in today's range),
+      <code>today</code> (<code>min</code>, <code>max</code>, <code>average</code>, <code>cheapestStart</code>, <code>mostExpensiveStart</code>),
+      <code>tomorrowPublished</code>, <code>stale</code>, <code>attribution</code>.
+    </dd>
+  </dl>
+  <h3>Details</h3>
+  <p>Great Britain is the within-day market index and an hour is only priced once it is over: the node then
+    sends the last complete hour (up to three hours old) and sets <code>stale: true</code>.</p>
+  <p>Without a send-on-hour option the node sends only when a message arrives, e.g. from an inject node.</p>
+</script>

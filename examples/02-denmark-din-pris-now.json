@@ -1,0 +1,96 @@
+[
+  {
+    "id": "e2tab",
+    "type": "tab",
+    "label": "elpriser: Denmark, price now (Din pris)",
+    "disabled": false,
+    "info": "The price you pay right now in Eastern Denmark with Radius as grid company: spot + Energinet tariffs + electricity duty + VAT + grid tariff (mode net_inkl_alt). Replace the GLN in the configuration node with your own grid company's (list: https://elpriser.org/tariffer) and the zone with DK1 if you live in Jutland or Funen. Without a grid company use mode inkl_alt."
+  },
+  {
+    "id": "e2cfg",
+    "type": "elpriser-config",
+    "name": "DK2 Radius, full price",
+    "zone": "dk2",
+    "mode": "net_inkl_alt",
+    "gln": "5790000705689",
+    "currency": "local",
+    "baseUrl": ""
+  },
+  {
+    "id": "e2inj",
+    "type": "inject",
+    "z": "e2tab",
+    "name": "every 15 min",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "900",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "2",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 130,
+    "y": 80,
+    "wires": [
+      [
+        "e2pr"
+      ]
+    ]
+  },
+  {
+    "id": "e2pr",
+    "type": "elpriser-price",
+    "z": "e2tab",
+    "name": "",
+    "server": "e2cfg",
+    "autoEmit": false,
+    "x": 330,
+    "y": 80,
+    "wires": [
+      [
+        "e2fn"
+      ]
+    ]
+  },
+  {
+    "id": "e2fn",
+    "type": "function",
+    "z": "e2tab",
+    "name": "sentence",
+    "func": "const e = msg.elpriser;\nmsg.payload = `${e.price} ${e.unit} now (${e.level}), next hour ${e.next ? e.next.price : 'unknown'}; today ${e.today.min}-${e.today.max}`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 80,
+    "wires": [
+      [
+        "e2db"
+      ]
+    ]
+  },
+  {
+    "id": "e2db",
+    "type": "debug",
+    "z": "e2tab",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "payload",
+    "statusType": "auto",
+    "x": 710,
+    "y": 80,
+    "wires": []
+  }
+]

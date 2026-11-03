@@ -1,0 +1,57 @@
+{
+  "name": "node-red-contrib-elpriser",
+  "version": "0.1.0",
+  "description": "Node-RED nodes for electricity prices from elpriser.org: current price, cheapest hours or window, forecast. 40 European price zones, Danish all-in prices.",
+  "main": "lib/elpriser.js",
+  "scripts": {
+    "test": "mocha \"test/**/*_spec.js\"",
+    "test:live": "ELPRISER_LIVE=1 mocha test/live_spec.js"
+  },
+  "keywords": [
+    "node-red",
+    "elpriser",
+    "electricity-price",
+    "spot-price",
+    "energy",
+    "home-automation",
+    "smart-home",
+    "denmark",
+    "europe",
+    "dynamic-tariff"
+  ],
+  "node-red": {
+    "version": ">=3.0.0",
+    "nodes": {
+      "elpriser-config": "nodes/elpriser-config.js",
+      "elpriser-price": "nodes/elpriser-price.js",
+      "elpriser-cheapest": "nodes/elpriser-cheapest.js",
+      "elpriser-forecast": "nodes/elpriser-forecast.js"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "lib",
+    "nodes",
+    "examples",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/x2q/node-red-contrib-elpriser#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/x2q/node-red-contrib-elpriser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/x2q/node-red-contrib-elpriser/issues"
+  },
+  "author": "x2q",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^10.8.2",
+    "node-red": "^4.0.0",
+    "node-red-node-test-helper": "^0.3.4",
+    "should": "^13.2.3"
+  }
+}

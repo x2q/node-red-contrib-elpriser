@@ -1,0 +1,83 @@
+[
+  {
+    "id": "e4tab",
+    "type": "tab",
+    "label": "elpriser: cheapest window for an appliance",
+    "disabled": false,
+    "info": "Finds the cheapest 2-hour run in a row within the next 12 hours (published prices only) and says when to start. 'nextStart' is the start of the window if it has not begun yet."
+  },
+  {
+    "id": "e4cfg",
+    "type": "elpriser-config",
+    "name": "",
+    "zone": "se3",
+    "mode": "inkl_alt",
+    "gln": "",
+    "currency": "local",
+    "baseUrl": ""
+  },
+  {
+    "id": "e4inj",
+    "type": "inject",
+    "z": "e4tab",
+    "name": "start button",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "0.1",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 130,
+    "y": 80,
+    "wires": [
+      [
+        "e4ch"
+      ]
+    ]
+  },
+  {
+    "id": "e4ch",
+    "type": "elpriser-cheapest",
+    "z": "e4tab",
+    "name": "cheapest 2 h in a row, next 12 h",
+    "server": "e4cfg",
+    "strategy": "window",
+    "count": "2",
+    "scope": "next",
+    "lookahead": "12",
+    "includeForecast": false,
+    "maxPrice": "",
+    "autoEmit": false,
+    "onlyChange": false,
+    "x": 370,
+    "y": 80,
+    "wires": [
+      [
+        "e4db"
+      ]
+    ]
+  },
+  {
+    "id": "e4db",
+    "type": "debug",
+    "z": "e4tab",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "elpriser",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 640,
+    "y": 80,
+    "wires": []
+  }
+]

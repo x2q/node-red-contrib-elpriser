@@ -1,0 +1,99 @@
+[
+  {
+    "id": "e3tab",
+    "type": "tab",
+    "label": "elpriser: forecast and the best 3-hour window",
+    "disabled": false,
+    "info": "Reads the price list for the next 48 hours (published prices, then elpriser.org's statistical model, which is NOT an official forecast) and finds the cheapest 3 hours in a row, e.g. for a washing machine. msg.payload from the forecast node is an array of {start, end, price, type, min, max} that charts and dashboards can use directly."
+  },
+  {
+    "id": "e3cfg",
+    "type": "elpriser-config",
+    "name": "",
+    "zone": "de",
+    "mode": "inkl_alt",
+    "gln": "",
+    "currency": "local",
+    "baseUrl": ""
+  },
+  {
+    "id": "e3inj",
+    "type": "inject",
+    "z": "e3tab",
+    "name": "every hour",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "3600",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "2",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 130,
+    "y": 80,
+    "wires": [
+      [
+        "e3fc"
+      ]
+    ]
+  },
+  {
+    "id": "e3fc",
+    "type": "elpriser-forecast",
+    "z": "e3tab",
+    "name": "next 48 h",
+    "server": "e3cfg",
+    "from": "now",
+    "hours": "48",
+    "includeForecast": true,
+    "autoEmit": false,
+    "x": 330,
+    "y": 80,
+    "wires": [
+      [
+        "e3fn"
+      ]
+    ]
+  },
+  {
+    "id": "e3fn",
+    "type": "function",
+    "z": "e3tab",
+    "name": "cheapest 3 h in a row",
+    "func": "const rows = msg.payload;\nconst n = 3;\nlet best = null;\nfor (let i = 0; i + n <= rows.length; i++) {\n  const w = rows.slice(i, i + n);\n  if (w.some((r, j) => j > 0 && r.start !== w[j - 1].end)) continue;\n  const avg = w.reduce((a, r) => a + r.price, 0) / n;\n  if (!best || avg < best.avg) best = { avg, start: w[0].start, end: w[n - 1].end, forecast: w.some(r => r.type === 'forecast') };\n}\nmsg.payload = best;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 560,
+    "y": 80,
+    "wires": [
+      [
+        "e3db"
+      ]
+    ]
+  },
+  {
+    "id": "e3db",
+    "type": "debug",
+    "z": "e3tab",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 790,
+    "y": 80,
+    "wires": []
+  }
+]
