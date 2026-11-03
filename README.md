@@ -16,11 +16,14 @@ the price right now, the cheapest hours (or the cheapest run of hours in a row) 
 
 ## Install
 
-Not on npm or in the Node-RED library yet. From the Node-RED user directory (usually `~/.node-red`):
+From the Node-RED user directory (usually `~/.node-red`):
 
 ```bash
-npm install x2q/node-red-contrib-elpriser     # straight from GitHub
+npm install node-red-contrib-elpriser
 ```
+
+Or search for `node-red-contrib-elpriser` under **Manage palette > Install** in Node-RED. The package is on
+[npm](https://www.npmjs.com/package/node-red-contrib-elpriser).
 
 Restart Node-RED. The nodes appear in the palette under **elpriser**. Example flows: *Import > Examples >
 node-red-contrib-elpriser* (or the files in [`examples/`](examples)).
@@ -136,4 +139,4 @@ Not affiliated with Node-RED / the OpenJS Foundation.
 billigste sammenhængende vindue) de næste N timer, og prognosen. 40 prisområder, gratis og uden nøgle. For
 Danmark kan du få den fulde pris inkl. nettarif ved at vælge `net_inkl_alt` og dit netselskabs GLN-nummer.
 Prognose-timerne er en statistisk model, ikke en officiel prognose, og bruges kun af "billigste timer" hvis du
-sætter kryds i det. Installation: `npm install x2q/node-red-contrib-elpriser` i `~/.node-red`.
+sætter kryds i det. Installation: `npm install node-red-contrib-elpriser` i `~/.node-red`.
