@@ -126,6 +126,37 @@ describe('lib/elpriser: daylight saving', () => {
   });
 });
 
+describe('lib/elpriser: Finland is on Helsinki time', () => {
+  const fiDay = (date) =>
+    lib.parse(
+      {
+        zone: 'fi',
+        unit: 'EUR/MWh',
+        zoneInfo: { currency: 'EUR', rate: 1 },
+        days: [{ date, type: 'actual', prices: Array.from({ length: 24 }, (_, hour) => ({ hour, eur_mwh: hour === 1 ? 5.77 : hour * 1000 })) }]
+      },
+      { zone: 'fi' }
+    );
+  it('the zone table: fi is Europe/Helsinki, the other Nordic zones and NL stay on Copenhagen', () => {
+    lib.ZONES.find((z) => z.key === 'fi').tz.should.equal('Europe/Helsinki');
+    for (const key of ['dk1', 'dk2', 'no1', 'no5', 'se1', 'se4', 'nl']) lib.ZONES.find((z) => z.key === key).tz.should.equal('Europe/Copenhagen', key);
+  });
+  it('ENTSO-E ground truth: the 2026-11-03 market day starts 2026-11-02T23:00Z = Helsinki hour 1; hour 0 is 22:00Z', () => {
+    const d = fiDay('2026-11-03');
+    d.tz.should.equal('Europe/Helsinki');
+    d.slots.should.have.length(24);
+    iso(d.slots[0].start).should.equal('2026-11-02T22:00:00.000Z');
+    iso(d.slots[1].start).should.equal('2026-11-02T23:00:00.000Z');
+    d.slots[1].value.should.equal(0.00577);
+    iso(d.slots[23].end).should.equal('2026-11-03T22:00:00.000Z');
+  });
+  it('summer: hour 0 is 21:00Z; the spring and autumn clock changes give 23 and 25 hours', () => {
+    iso(fiDay('2026-07-15').slots[0].start).should.equal('2026-07-14T21:00:00.000Z');
+    fiDay('2026-03-29').slots.should.have.length(23);
+    fiDay('2026-10-25').slots.should.have.length(25);
+  });
+});
+
 describe('lib/elpriser: every slot lands on the hour it was published for (2026-2027, Intl as the reference)', function () {
   this.timeout(60000);
   for (const [zone, tz] of [['de', 'Europe/Berlin'], ['gr', 'Europe/Athens'], ['gb', 'Europe/London'], ['pt', 'Europe/Lisbon']]) {

@@ -100,6 +100,8 @@ Every node accepts `msg.now` (milliseconds or an ISO 8601 string) to pretend it 
   absolute one-hour slots with the IANA time zone of the zone (verified for all 40 zones through a whole year),
   so a 23- or 25-hour day at a clock change is handled: on a 25-hour day the doubled hour carries one price for
   both occurrences, as the service delivers it. Timestamps on messages are ISO 8601 UTC.
+  The Nordic zones and the Netherlands run on the Copenhagen clock; **Finland runs on Helsinki time** (elpriser.org
+  cuts `fi` into Helsinki days since 2026-11-03: hour 0 is 00:00 Helsinki, 22:00 UTC in winter).
 
 ## API etiquette
 

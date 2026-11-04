@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-elpriser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Node-RED nodes for electricity prices from elpriser.org: current price, cheapest hours or window, forecast. 40 European price zones, Danish all-in prices.",
   "main": "lib/elpriser.js",
   "scripts": {
